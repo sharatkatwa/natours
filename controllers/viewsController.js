@@ -104,5 +104,9 @@ exports.alerts = (req, res, next) => {
       'Your account has been created successfully! And logged in';
     res.locals.alertType = alert;
   }
+  if (alert === 'logout') {
+    res.locals.alert = 'Logged out!';
+    res.locals.alertType = alert;
+  }
   next();
 };

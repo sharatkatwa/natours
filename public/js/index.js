@@ -94,4 +94,7 @@ if (alertMessage) {
   if (alertType === 'login' || alertType === 'signup') {
     showAlert('success', alertMessage);
   }
+  if (alertType === 'logout') {
+    showAlert('error', alertMessage);
+  }
 }
