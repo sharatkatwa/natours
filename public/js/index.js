@@ -85,5 +85,13 @@ if (bookBtn)
     bookTour(tourId);
   });
 
-const alertMessage = document.querySelector('body').dataset.alert;
-if (alertMessage) showAlert('success', alertMessage, 20);
+const alertMessage = document.querySelector('body').dataset.alertMessage;
+const alertType = document.querySelector('body').dataset.alertType;
+if (alertMessage) {
+  if (alertType === 'booking') {
+    showAlert('success', alertMessage, 20);
+  }
+  if (alertType === 'login' || alertType === 'signup') {
+    showAlert('success', alertMessage);
+  }
+}
