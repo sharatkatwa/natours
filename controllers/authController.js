@@ -2,9 +2,11 @@ const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
+const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const Email = require('../utils/email');
+const { findOne } = require('../models/userModel');
 
 const signToken = (id) =>
   jwt.sign({ id }, process.env.JWT_SECRET, {
@@ -154,6 +156,22 @@ exports.restrictTo =
     }
     next();
   };
+
+exports.restrictReview = async (req, res, next) => {
+  const tourId = req.body.tour;
+  const userId = req.body.user;
+  const bookedUser = await Booking.findOne({ tour: tourId, user: userId });
+
+  if (!bookedUser) {
+    next(
+      new AppError(
+        'You are not booked this tour to write a review. Please book this tour before writing review.',
+        403
+      )
+    );
+  }
+  next();
+};
 
 exports.forgotPassword = catchAsync(async (req, res, next) => {
   //  1) Get user based on POSTed email
