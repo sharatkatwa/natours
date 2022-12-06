@@ -1,6 +1,7 @@
 const multer = require('multer');
 const sharp = require('sharp');
 const Tour = require('../models/tourModel');
+const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
@@ -65,6 +66,19 @@ exports.aliasTopTour = (req, res, next) => {
   req.query.fields = 'name,price,ratingsAverage,summary,difficulty';
   next();
 };
+
+exports.getTourBookings = catchAsync(async (req, res, next) => {
+  const tourid = req.params.id;
+  const tourBookings = await Booking.find({ tour: tourid });
+
+  res.status(200).json({
+    status: 'success',
+    results: tourBookings.length,
+    data: {
+      data: tourBookings,
+    },
+  });
+});
 
 exports.getAllTours = factory.getAll(Tour);
 exports.getTour = factory.getOne(Tour, { path: 'reviews' });

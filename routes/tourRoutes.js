@@ -22,6 +22,13 @@ router
     tourController.getMonthlyPlan
   );
 
+router.get(
+  '/:id/bookings',
+  authController.protect,
+  authController.restrictTo('admin', 'lead-guide'),
+  tourController.getTourBookings
+);
+
 // We can also do it like this but,
 //  /tours-within?distance=322&center=-40,45&unit=mi
 // this way it looks lot cleaner

@@ -1,6 +1,7 @@
 const multer = require('multer');
 const sharp = require('sharp');
 const User = require('../models/userModel');
+const Booking = require('../models/bookingModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
@@ -94,6 +95,19 @@ exports.deleteMe = catchAsync(async (req, res, next) => {
   res.status(204).json({
     status: 'success',
     data: null,
+  });
+});
+
+exports.getUserBookings = catchAsync(async (req, res, next) => {
+  const userid = req.params.id;
+  const userBookings = await Booking.find({ user: userid });
+
+  res.status(200).json({
+    status: 'success',
+    results: userBookings.length,
+    data: {
+      data: userBookings,
+    },
   });
 });
 
