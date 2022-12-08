@@ -196,7 +196,7 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
       message: 'Token sent to email!',
     });
   } catch (err) {
-    user.passwoedResetToken = undefined;
+    user.passwordResetToken = undefined;
     user.passwordResetExpires = undefined;
     await user.save({ validateBeforeSave: false });
 
@@ -220,9 +220,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
     passwordResetToken: hashedToken,
     passwordResetExpires: { $gt: Date.now() },
   });
-
-  exports.sendConfirmEmail = catchAsync(async (req, res, next) => {});
-
   //  2) If token has not expired, and there is user, set the new password
   if (!user) {
     return next(new AppError('Token is invalid or has expired', 400));
@@ -237,6 +234,75 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 
   //  4) Log the user in, send JWT
   createSendToken(user, 200, req, res);
+});
+
+exports.sendConfirmEmail = catchAsync(async (req, res, next) => {
+  const user = req.user;
+  if (user.confirmEmail === true) {
+    return next(
+      new AppError(
+        'Your email is already verified, no need to verify again!',
+        403
+      )
+    );
+  }
+  confirmToken = user.createEmailConfirmToken();
+  await user.save({ validateBeforeSave: false });
+
+  try {
+    const confirmURL = `${req.protocol}://${req.get(
+      'host'
+    )}/api/v1/users/verifyEmail/${confirmToken}`;
+    await new Email(user, confirmURL).sendConfirmEmail();
+
+    res.status(200).json({
+      status: 'success',
+      message: 'confirmation email was sent!',
+    });
+  } catch (err) {
+    user.emailConfirmToken = undefined;
+    user.emailConfirmExpires = undefined;
+    await user.save({ validateBeforeSave: false });
+    console.log(err);
+
+    return next(
+      new AppError(
+        'There was an error sending the email. Try again later!',
+        500
+      )
+    );
+  }
+});
+
+exports.verifyEmail = catchAsync(async (req, res, next) => {
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    emailConfirmToken: hashedToken,
+    emailConfirmExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(
+      new AppError(
+        'Link is invalid or has expired! Please try to send another confirmation email.',
+        400
+      )
+    );
+  }
+
+  user.confirmEmail = true;
+  user.emailConfirmToken = undefined;
+  user.emailConfirmExpires = undefined;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).json({
+    status: 'success',
+    message: 'Your email verified successfully!',
+  });
 });
 
 exports.updatePassword = catchAsync(async (req, res, next) => {
