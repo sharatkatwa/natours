@@ -69,6 +69,9 @@ body {
 
 .ma-bt-md {
   margin-bottom: 3rem !important;
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
 }
 
 .ma-bt-lg {
@@ -182,6 +185,7 @@ body {
   width: 70%;
   z-index: 10;
 }
+
 
 .btn,
 .btn:link,
@@ -1295,6 +1299,35 @@ body {
   width: 7.5rem;
   border-radius: 50%;
   margin-right: 2rem;
+}
+.btn-confirmemail {
+  font-size: 1.6rem;
+  margin: 1.4rem 0;
+  margin-left: auto;
+  align-self: flex-end;
+  padding: 1.4rem 3rem;
+  padding-left: auto;
+  border-radius: 10rem;
+  text-transform: uppercase;
+  display: inline-block;
+  text-decoration: none;
+  position: relative;
+  -webkit-transition: all 0.4s;
+  transition: all 0.4s;
+  font-weight: 400;
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  /*Add later when we use this for the button in form*/
+  border: none;
+  cursor: pointer;
+}
+.btn--confirm {
+  background-color: #55c57a3a;
+  color: #55c57a;
+}
+.btn--confirm::after {
+  background-color: #55c57a;
+  color: #fff
 }
 
 .form__upload {
