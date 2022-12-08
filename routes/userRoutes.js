@@ -10,6 +10,13 @@ router.get('/logout', authController.logout);
 router.post('/forgotPassword', authController.forgotPassword);
 router.patch('/resetPassword/:token', authController.resetPassword);
 
+router.post(
+  '/sendConfirmEmail',
+  authController.protect,
+  authController.sendConfirmEmail
+);
+router.patch('/verifyEmail/:token', authController.verifyEmail);
+
 router.get(
   '/:id/bookings',
   authController.protect,

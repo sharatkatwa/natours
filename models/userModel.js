@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     unique: true,
     validate: [validator.isEmail, 'Please provide a valid email'],
   },
+  confirmEmail: {
+    type: Boolean,
+    default: false,
+  },
   photo: {
     type: String,
     default: 'default.jpg',
@@ -46,6 +50,8 @@ const userSchema = new mongoose.Schema({
   passwordChangedAt: {
     type: Date,
   },
+  emailConfirmToken: String,
+  emailConfirmExpires: Date,
   passwordResetToken: String,
   passwordResetExpires: Date,
   active: {
@@ -110,6 +116,18 @@ userSchema.methods.createPasswordResetToken = function () {
   this.passwordResetExpires = Date.now() + 10 * 60 * 1000;
 
   return resetToken;
+};
+userSchema.methods.createEmailConfirmToken = function () {
+  const confirmToken = crypto.randomBytes(32).toString('hex');
+
+  this.emailConfirmToken = crypto
+    .createHash('sha256')
+    .update(confirmToken)
+    .digest('hex');
+
+  this.emailConfirmExpires = Date.now() + 10 * 60 * 1000;
+
+  return confirmToken;
 };
 
 const User = mongoose.model('User', userSchema);
