@@ -142,6 +142,17 @@ body {
   background-image: linear-gradient(to right, #ff7730, #eb4d4b);
   font-size: 3.5rem;
 }
+.heading-secondary--success {
+  background-image: -webkit-gradient(
+    linear,
+    left top,
+    right top,
+    from(#6bff30),
+    to(#ceeb4b)
+  );
+  background-image: linear-gradient(to right, #6bff30, #ceeb4b);
+  font-size: 3.5rem;
+}
 
 .heading-primary,
 .heading-tertirary {

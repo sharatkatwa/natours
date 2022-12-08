@@ -41,7 +41,8 @@ block content
                         .form__group.ma-bt-md
                             label.form__label(for='email') Email address
                             input#email.form__input(type='email', value=`${user.email}`, required name='email')
-                            a.btn.btn--small.btn--confirm.btn-confirmemail(href='#') Confirm Email
+                            - if (user.confirmEmail === false)
+                                a.btn.btn--small.btn--confirm.btn-confirmemail(href='#') Confirm Email
                         .form__group.form__photo-upload
                             img.form__user-photo(src=`img/users/${user.photo}`, alt=`${user.name} photo`)
                             

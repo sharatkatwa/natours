@@ -250,9 +250,12 @@ exports.sendConfirmEmail = catchAsync(async (req, res, next) => {
   await user.save({ validateBeforeSave: false });
 
   try {
+    // const confirmURL = `${req.protocol}://${req.get(
+    //   'host'
+    // )}/api/v1/users/verifyEmail/${confirmToken}`;
     const confirmURL = `${req.protocol}://${req.get(
       'host'
-    )}/api/v1/users/verifyEmail/${confirmToken}`;
+    )}/verify-email/${confirmToken}`;
     await new Email(user, confirmURL).sendConfirmEmail();
 
     res.status(200).json({

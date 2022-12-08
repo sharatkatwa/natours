@@ -7,6 +7,7 @@ import { signup } from './signup';
 import { updateSettings } from './updateSettings';
 import { bookTour } from './stripe';
 import { showAlert } from './alerts';
+import { sendConfirmEmail } from './sendConfirmEmail';
 
 // DOM ELEMENTS
 const leaflet = document.getElementById('map');
@@ -16,6 +17,7 @@ const logOutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
 const bookBtn = document.getElementById('book-tour');
+const confirmEmailBtn = document.querySelector('.btn-confirmemail');
 
 // DELEGATION
 if (leaflet) {
@@ -75,6 +77,13 @@ if (userPasswordForm) {
     document.getElementById('password-current').value = '';
     document.getElementById('password').value = '';
     document.getElementById('password-confirm').value = '';
+  });
+}
+
+if (confirmEmailBtn) {
+  confirmEmailBtn.addEventListener('click', async (e) => {
+    e.preventDefault();
+    await sendConfirmEmail();
   });
 }
 

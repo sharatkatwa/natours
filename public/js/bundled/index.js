@@ -150,6 +150,7 @@ var _signup = require("./signup");
 var _updateSettings = require("./updateSettings");
 var _stripe = require("./stripe");
 var _alerts = require("./alerts");
+var _sendConfirmEmail = require("./sendConfirmEmail");
 // DOM ELEMENTS
 const leaflet = document.getElementById("map");
 const loginForm = document.querySelector(".form--login");
@@ -158,6 +159,7 @@ const logOutBtn = document.querySelector(".nav__el--logout");
 const userDataForm = document.querySelector(".form-user-data");
 const userPasswordForm = document.querySelector(".form-user-password");
 const bookBtn = document.getElementById("book-tour");
+const confirmEmailBtn = document.querySelector(".btn-confirmemail");
 // DELEGATION
 if (leaflet) {
     const locations = JSON.parse(leaflet.dataset.locations);
@@ -202,6 +204,10 @@ if (userPasswordForm) userPasswordForm.addEventListener("submit", async (e)=>{
     document.getElementById("password").value = "";
     document.getElementById("password-confirm").value = "";
 });
+if (confirmEmailBtn) confirmEmailBtn.addEventListener("click", async (e)=>{
+    e.preventDefault();
+    await (0, _sendConfirmEmail.sendConfirmEmail)();
+});
 if (bookBtn) bookBtn.addEventListener("click", (e)=>{
     e.target.textContent = "Processing...";
     const { tourId  } = e.target.dataset;
@@ -215,7 +221,7 @@ if (alertMessage) {
     if (alertType === "logout") (0, _alerts.showAlert)("error", alertMessage);
 }
 
-},{"@babel/polyfill":"dmYbO","./leaflet":"kk0Lb","./login":"iRDh3","./signup":"eL2pA","./updateSettings":"g5pah","./stripe":"cnzKw","./alerts":"fI2v6"}],"dmYbO":[function(require,module,exports) {
+},{"@babel/polyfill":"dmYbO","./leaflet":"kk0Lb","./login":"iRDh3","./signup":"eL2pA","./updateSettings":"g5pah","./stripe":"cnzKw","./alerts":"fI2v6","./sendConfirmEmail":"fmSzj"}],"dmYbO":[function(require,module,exports) {
 "use strict";
 require("./noConflict");
 var _global = _interopRequireDefault(require("core-js/library/fn/global"));
@@ -11462,6 +11468,26 @@ const bookTour = async (tourId)=>{
     } catch (err) {
         console.log(err);
         (0, _alerts.showAlert)("error", err);
+    }
+};
+
+},{"axios":"1lYPz","./alerts":"fI2v6","@parcel/transformer-js/src/esmodule-helpers.js":"h6k2d"}],"fmSzj":[function(require,module,exports) {
+/* eslint-disable */ var parcelHelpers = require("@parcel/transformer-js/src/esmodule-helpers.js");
+parcelHelpers.defineInteropFlag(exports);
+parcelHelpers.export(exports, "sendConfirmEmail", ()=>sendConfirmEmail);
+var _axios = require("axios");
+var _axiosDefault = parcelHelpers.interopDefault(_axios);
+var _alerts = require("./alerts");
+const sendConfirmEmail = async ()=>{
+    try {
+        const res = await (0, _axiosDefault.default)({
+            method: "POST",
+            url: "/api/v1/users/sendConfirmEmail",
+            data: {}
+        });
+        if (res.data.status === "success") (0, _alerts.showAlert)("success", "Please check your email,the confirmation email sent successfully!");
+    } catch (err) {
+        (0, _alerts.showAlert)("error", err.response.data.message);
     }
 };
 

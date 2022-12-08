@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 const Booking = require('../models/bookingModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
+const crypto = require('crypto');
 
 exports.getOverview = catchAsync(async (req, res, next) => {
   // 1) Get tour data from collection
@@ -53,6 +54,36 @@ exports.getAccount = (req, res) => {
     title: 'Your account',
   });
 };
+
+exports.verifyEmail = catchAsync(async (req, res, next) => {
+  const hashedToken = crypto
+    .createHash('sha256')
+    .update(req.params.token)
+    .digest('hex');
+
+  const user = await User.findOne({
+    emailConfirmToken: hashedToken,
+    emailConfirmExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(
+      new AppError(
+        'Link is invalid or has expired! Please try to send another confirmation email.',
+        400
+      )
+    );
+  }
+
+  user.confirmEmail = true;
+  user.emailConfirmToken = undefined;
+  user.emailConfirmExpires = undefined;
+  await user.save({ validateBeforeSave: false });
+
+  res.status(200).render('verifyEmail', {
+    title: 'Email varification',
+  });
+});
 
 exports.getMyTours = catchAsync(async (req, res, next) => {
   // 1) Find all bookings
