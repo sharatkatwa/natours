@@ -1,3 +1,6 @@
 # Natours Application
 
-Built using modern technologies: node.js, express, mongoDB, mongoose with fun😉
+A tour booking ssr website made with REST api using Node, Express, MongoDB
+
+# checkout here
+https://natours-sharat.cyclic.app
